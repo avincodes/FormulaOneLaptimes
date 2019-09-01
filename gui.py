@@ -250,7 +250,6 @@ class Ui_Dialog(QtWidgets.QDialog):
             self.label_right_3.setText(str(self.ms2mssmmm(lineslist[0].getAvgVal()))+ ' ,' + lineslist[0].name() + ' '*spaces + str(self.ms2mssmmm(lineslist[1].getAvgVal()))+ ', ' + lineslist[1].name())
             self.label_right_4.setText(str(lineslist[0].getStintlength())+ ' ,' + lineslist[0].name()+' '*spaces + str(lineslist[1].getStintlength())+ ', ' + lineslist[1].name())
             self.detailedTiming.setColumnCount(3)
-            self.detailedTiming.setRowCount(self.max_cal_lap-self.min_cal_lap+1)
             header = ['Lap', lineslist[0].name() ,lineslist[1].name()]
             self.detailedTiming.setHorizontalHeaderLabels(header)
             pt0 = 0
@@ -260,6 +259,7 @@ class Ui_Dialog(QtWidgets.QDialog):
             rowcount = 0
             min_lap = int(min(lineslist[0].getMinX().x(),lineslist[1].getMinX().x()))
             max_lap = int(max(lineslist[0].getMaxX().x(),lineslist[1].getMaxX().x()))
+            self.detailedTiming.setRowCount(max_lap-min_lap+1)
             print(min_lap, lineslist[0].getMinX().x(),lineslist[1].getMinX().x())
             for i in range(min_lap, max_lap+1):
                 item0 = QtWidgets.QTableWidgetItem(str(i))
@@ -1925,7 +1925,7 @@ class Ui_Dialog(QtWidgets.QDialog):
 
     def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
-        self.setWindowTitle(_translate("Dialog", "F1 Analyz v0.8.1"))
+        self.setWindowTitle(_translate("Dialog", "F1 Analyz v0.8.1b"))
         self.label.setText(_translate("Dialog", "Ready."))
         self.label_2.setText(_translate("Dialog", "StartLap:"))
         self.label_3.setText(_translate("Dialog", "FinishLap:"))
