@@ -13,112 +13,8 @@ import bitarray
 import matplotlib.pyplot as plt
 import time
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FC
-
-class CustomedQLineSeries(QtChart.QLineSeries):
-
-    Signal_click_timing = QtCore.pyqtSignal(str,str,list,QtCore.QPointF,QtCore.QPointF,float,int)
-    Signal_name_hovered = QtCore.pyqtSignal(str)
-
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        self.clicked.connect(self.emitclick)
-        self.hovered.connect(self.highlighted)
-        self.hovered.connect(self.emitnameHovered)
-
-    def emitclick(self):
-        self.Signal_click_timing.emit(self.name(),self.objectName(),self.getAllpoints(),self.getMaxY(),self.getMinY(),self.getAvgVal(),self.getStintlength())
-
-    def emitnameHovered(self):
-        self.Signal_name_hovered.emit(self.name())
-
-    def getAllpoints(self):
-        return list(self.pointsVector())
-
-    def highlighted(self, point, state):
-        if state:
-            pen = self.pen()
-            pen.setWidth(5)
-            color = self.color()
-            pen.setBrush(color)
-            self.setPen(pen)
-        else:
-            pen = self.pen()
-            pen.setWidth(2)
-            color = self.color()
-            pen.setBrush(color)
-            self.setPen(pen)
-
-    def getMaxY(self):
-        curval = 0
-        curpt = None
-        for i in self.getAllpoints():
-            if curpt is None:
-                curpt = i
-                curval = i.y()
-            else:
-                if i.y() > curval:
-                    curpt = i
-                    curval = i.y()
-        return curpt
-
-    def getMinY(self):
-        curval = 0
-        curpt = None
-        for i in self.getAllpoints():
-            if curpt is None:
-                curpt = i
-                curval = i.y()
-            else:
-                if i.y() < curval:
-                    curpt = i
-                    curval = i.y()
-        return curpt
-
-    def getAvgVal(self):
-        sum = 0
-        for i in self.getAllpoints():
-            sum += i.y()
-        if self.count():
-            sum /= self.count()
-        return sum
-    
-    def getMinX(self):
-        curval = 0
-        curpt = None
-        for i in self.getAllpoints():
-            if curpt is None:
-                curpt = i
-                curval = i.x()
-            else:
-                if i.x() < curval:
-                    curpt = i
-                    curval = i.x()
-        return curpt
-
-    def getMaxX(self):
-        curval = 0
-        curpt = None
-        for i in self.getAllpoints():
-            if curpt is None:
-                curpt = i
-                curval = i.x()
-            else:
-                if i.x() > curval:
-                    curpt = i
-                    curval = i.x()
-        return curpt
-
-    def getStintlength(self):
-        return self.count()
-
-class CustomedQChartView(QtChart.QChartView):
-
-    Signal_pos = QtCore.pyqtSignal(QtCore.QPointF)
-
-    def __init__(self,parent=None):
-        super().__init__(parent)
-        self.setMouseTracking(True)
-
+from CustomedWidgets.customed_qlineseries import CustomedQLineSeries
+from CustomedWidgets.customed_qchartview import CustomedQChartView
 
 class Ui_Dialog(QtWidgets.QDialog):
 
@@ -248,7 +144,7 @@ class Ui_Dialog(QtWidgets.QDialog):
             self.label_right_1.setText(self.ms2mssmmm(lineslist[0].getMinY().y()) + ' (lap ' + str(int(lineslist[0].getMinY().x())) + ', ' + lineslist[0].name() + ') ' + self.ms2mssmmm(lineslist[1].getMinY().y())+ ' (lap ' + str(int(lineslist[1].getMinY().x()))+ ', ' + lineslist[1].name() + ') ')
             self.label_right_2.setText(self.ms2mssmmm(lineslist[0].getMaxY().y()) + ' (lap ' + str(int(lineslist[0].getMaxY().x())) + ', ' + lineslist[0].name() + ') ' + self.ms2mssmmm(lineslist[1].getMaxY().y())+ ' (lap ' + str(int(lineslist[1].getMaxY().x()))+ ', ' + lineslist[1].name() + ') ')
             self.label_right_3.setText(str(self.ms2mssmmm(lineslist[0].getAvgVal()))+ ' ,' + lineslist[0].name() + ' '*spaces + str(self.ms2mssmmm(lineslist[1].getAvgVal()))+ ', ' + lineslist[1].name())
-            self.label_right_4.setText(str(lineslist[0].getStintlength())+ ' ,' + lineslist[0].name()+' '*spaces + str(lineslist[1].getStintlength())+ ', ' + lineslist[1].name())
+            self.label_right_4.setText(str(lineslist[0].Count())+ ' ,' + lineslist[0].name()+' '*spaces + str(lineslist[1].Count())+ ', ' + lineslist[1].name())
             self.detailedTiming.setColumnCount(3)
             header = ['Lap', lineslist[0].name() ,lineslist[1].name()]
             self.detailedTiming.setHorizontalHeaderLabels(header)
@@ -770,7 +666,7 @@ class Ui_Dialog(QtWidgets.QDialog):
                 plot_pool.setName(self.name[k])
                 plot_pool.setObjectName('plotline_time '+str(k))
                 plot_pool.Signal_name_hovered.connect(self.storeHoveredName)
-                plot_pool.Signal_click_timing.connect(self.QLineClickedTiming)
+                plot_pool.Signal_click.connect(self.QLineClickedTiming)
                 plot_pool.hovered.connect(self.tooltip)
                 # plot_pool.hovered.connect(self.chartView.showTooltip)
                 self.timegraph.addSeries(plot_pool)
@@ -799,7 +695,7 @@ class Ui_Dialog(QtWidgets.QDialog):
                     name = self.db.getDriversByDriverID(driver['driverId'])[0]['surname']
                     plot_pool.setName(name)
                     plot_pool.setObjectName('plotline_time ' + str(k))
-                    plot_pool.Signal_click_timing.connect(self.QLineClickedTiming)
+                    plot_pool.Signal_click.connect(self.QLineClickedTiming)
                     plot_pool.Signal_name_hovered.connect(self.storeHoveredName)
                     plot_pool.hovered.connect(self.tooltip)
                     self.timegraph.addSeries(plot_pool)
@@ -870,7 +766,7 @@ class Ui_Dialog(QtWidgets.QDialog):
                     name1 = self.db.getDriversByDriverID(driver_pools[j]['driverId'])[0]['surname']
                     plot_pool.setName(name0 + ' and ' + name1)
                     plot_pool.setObjectName('plotline_spacegap ' + str(i)+ ' '+ str(j))
-                    plot_pool.Signal_click_timing.connect(self.QLineClickedSpace)
+                    plot_pool.Signal_click.connect(self.QLineClickedSpace)
                     plot_pool.Signal_name_hovered.connect(self.storeHoveredName)
                     plot_pool.hovered.connect(self.tooltip)
                     self.spacegapgraph.addSeries(plot_pool)
@@ -914,7 +810,7 @@ class Ui_Dialog(QtWidgets.QDialog):
                                         plot_pool.append(lap, diff)
                         plot_pool.setName(self.name[i] + ' and ' + self.name[j])
                         plot_pool.setObjectName('plotline_spacegap ' + str(i) + ' ' + str(j))
-                        plot_pool.Signal_click_timing.connect(self.QLineClickedSpace)
+                        plot_pool.Signal_click.connect(self.QLineClickedSpace)
                         plot_pool.Signal_name_hovered.connect(self.storeHoveredName)
                         plot_pool.hovered.connect(self.tooltip)
                         self.spacegapgraph.addSeries(plot_pool)
@@ -969,8 +865,8 @@ class Ui_Dialog(QtWidgets.QDialog):
                     name1 = self.db.getDriversByDriverID(driver_pools[j]['driverId'])[0]['surname']
                     plot_pool.setName(name0 + ' and ' + name1)
                     plot_pool.setObjectName('plotline_timegap ' + str(i)+ ' '+ str(j))
-                    # plot_pool.Signal_click_timing.connect(self.QLineClickedGap)
-                    plot_pool.Signal_click_timing.connect(self.QLineClickedSpace)
+                    # plot_pool.Signal_click.connect(self.QLineClickedGap)
+                    plot_pool.Signal_click.connect(self.QLineClickedSpace)
                     plot_pool.Signal_name_hovered.connect(self.storeHoveredName)
                     plot_pool.hovered.connect(self.tooltip)
                     self.timegapgraph.addSeries(plot_pool)
@@ -1015,8 +911,8 @@ class Ui_Dialog(QtWidgets.QDialog):
                                         plot_pool.append(lap, diff)
                         plot_pool.setName(self.name[i] + ' and ' + self.name[j])
                         plot_pool.setObjectName('plotline_timegap ' + str(i) + ' ' + str(j))
-                        # plot_pool.Signal_click_timing.connect(self.QLineClickedGap)
-                        plot_pool.Signal_click_timing.connect(self.QLineClickedSpace)
+                        # plot_pool.Signal_click.connect(self.QLineClickedGap)
+                        plot_pool.Signal_click.connect(self.QLineClickedSpace)
                         plot_pool.Signal_name_hovered.connect(self.storeHoveredName)
                         plot_pool.hovered.connect(self.tooltip)
                         self.timegapgraph.addSeries(plot_pool)

@@ -1,14 +1,3 @@
-# F1_Analyz
-
-Wheel-to-wheel battles, pitstops, pushing the car to the limit every single milisecond.
-
-
-This project is made with the purpose of analyzing F1 laptimes, provides multiple ways of plotting and showing the laptime difference.
-
-Data of the project is provided by [ Chris Newell](https://github.com/jcnewell)'s [ergast-f1-api](https://github.com/jcnewell/ergast-f1-api),
-the website is [	https://ergast.com](	https://ergast.com). A big thanks to Chris for the tremendous work, so that precious data of F1 can be utilized.
-
-The data contains multiple tables all in a MySQL db, and will be updated after each race. Currently the database the project is using contains data from F1 2019 Hungarian Grand Prix.
 
 Requirements
 
@@ -36,10 +25,10 @@ to start the software.
 
 Current version: 0.7.0 
 
-The project is in a very early stage, and a lot of features and algorithms are needed. Please join in the project if you're also a F1 lover, and just want to dig a little deeper. We need your help!
+The project is in a very early stage, and a lot of features and algorithms are needed. Any king of help is greatly appreciated!
 
-Matplotlib view:
-![Screenshot not yet loaded](https://github.com/Hycdog/img_folder/blob/master/Screenshot_20190820_105513.png)
+## Code
 
-QtChart view:
-![Screenshot not yet loaded](https://github.com/Hycdog/img_folder/blob/master/Screenshot_20190820_105350.png)
+The GUI is made with the python3 implementation of Qt -- PyQt5.
+
+The Initial thought of this project is to take a deeper dive into the F1.
