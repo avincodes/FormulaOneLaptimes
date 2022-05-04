@@ -7,7 +7,7 @@
 # WARNING! All changes made in this file will be lost!
 
 
-from PyQt5 import QtCore, QtGui, QtWidgets, QtChart
+
 from database_connector import f1db
 import bitarray
 import matplotlib.pyplot as plt
@@ -1854,3 +1854,11 @@ if __name__ == "__main__":
     ui.setupUi()
     ui.show()
     sys.exit(app.exec_())
+
+#%%
+
+#%%
+
+#%%
+
+#%%
